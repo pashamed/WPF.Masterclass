@@ -42,7 +42,7 @@ namespace WeatherApp.ViewModel.Helpers
             {
                 var response = await client.GetAsync(url);
                 var responseStream = await response.Content.ReadAsStreamAsync();
-                conditions = JsonSerializer.Deserialize<CurrentConditions>(responseStream);
+                conditions = JsonSerializer.Deserialize<List<CurrentConditions>>(responseStream).FirstOrDefault() ;
             }
 
             return conditions;

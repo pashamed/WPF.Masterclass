@@ -1,10 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using WeatherApp.Model;
+using WeatherApp.ViewModel.Helpers;
 
 namespace WeatherApp.ViewModel
 {
@@ -41,13 +43,18 @@ namespace WeatherApp.ViewModel
             get { return selectedCity; }
             set
             {
-                selectedCity = value;
+                selectedCity = value;                
                 OnPropertyChanged("SelectedCity");
+                GetCurrentConditions();
             }
         }
 
+        public ObservableCollection<City> Cities { get; set; }
+
+        public SearchCommand SearchCommand { get; set; }
+
         public WeatherVM()
-        {
+        {            
             if (DesignerProperties.GetIsInDesignMode(new System.Windows.DependencyObject()))
             {
                 SelectedCity = new City()
@@ -66,6 +73,26 @@ namespace WeatherApp.ViewModel
                     }
                 }; 
             }
+            SearchCommand = new SearchCommand(this);
+            Cities = new ObservableCollection<City>();
+        }
+
+        private async void GetCurrentConditions()
+        {
+            Query = string.Empty;
+            Cities.Clear();
+            CurrentConditions = await AccuWeatherHelper.GetCurrentConditionsAsync(SelectedCity.Key);
+        }
+
+        public async void MakeQuery()
+        {
+            var cities = await AccuWeatherHelper.GetCities(Query);
+            Cities.Clear();
+            foreach (City city in cities)
+            {
+                Cities.Add(city);
+            }
+        
         }
 
         public event PropertyChangedEventHandler? PropertyChanged;
