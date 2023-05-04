@@ -51,7 +51,7 @@ namespace EvernoteClone.Migrations
 
                     b.HasIndex("NotebookId");
 
-                    b.ToTable("notes");
+                    b.ToTable("Notes");
                 });
 
             modelBuilder.Entity("EvernoteClone.Model.Notebook", b =>
@@ -73,7 +73,7 @@ namespace EvernoteClone.Migrations
 
                     b.HasIndex("UserId");
 
-                    b.ToTable("notebooks");
+                    b.ToTable("Notebooks");
                 });
 
             modelBuilder.Entity("EvernoteClone.Model.User", b =>
@@ -104,7 +104,7 @@ namespace EvernoteClone.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("users");
+                    b.ToTable("Users");
                 });
 
             modelBuilder.Entity("EvernoteClone.Model.Note", b =>

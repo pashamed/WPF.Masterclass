@@ -10,9 +10,9 @@ namespace EvernoteClone.ViewModel.Helpers
 {
     internal class DatabaseHelperContext : DbContext
     {
-        DbSet<Note> notes { get; set; }
-        DbSet<User> users { get; set; }
-        DbSet<Notebook> notebooks { get; set; }
+        public DbSet<Note> Notes { get; set; }
+        public DbSet<User> Users { get; set; }
+        public DbSet<Notebook> Notebooks { get; set; }
 
         public DatabaseHelperContext() : base() { }
 

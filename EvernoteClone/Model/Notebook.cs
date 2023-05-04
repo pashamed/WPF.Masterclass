@@ -9,6 +9,7 @@ namespace EvernoteClone.Model
 {
     public class Notebook
     {
+        [Key]
         public int Id { get; set; }
         public User User { get; set; }
         public string Name { get; set; }

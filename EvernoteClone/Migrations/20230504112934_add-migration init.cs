@@ -6,13 +6,13 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace EvernoteClone.Migrations
 {
     /// <inheritdoc />
-    public partial class init : Migration
+    public partial class addmigrationinit : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.CreateTable(
-                name: "users",
+                name: "Users",
                 columns: table => new
                 {
                     Id = table.Column<int>(type: "int", nullable: false)
@@ -24,11 +24,11 @@ namespace EvernoteClone.Migrations
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_users", x => x.Id);
+                    table.PrimaryKey("PK_Users", x => x.Id);
                 });
 
             migrationBuilder.CreateTable(
-                name: "notebooks",
+                name: "Notebooks",
                 columns: table => new
                 {
                     Id = table.Column<int>(type: "int", nullable: false)
@@ -38,17 +38,17 @@ namespace EvernoteClone.Migrations
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_notebooks", x => x.Id);
+                    table.PrimaryKey("PK_Notebooks", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_notebooks_users_UserId",
+                        name: "FK_Notebooks_Users_UserId",
                         column: x => x.UserId,
-                        principalTable: "users",
+                        principalTable: "Users",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                 });
 
             migrationBuilder.CreateTable(
-                name: "notes",
+                name: "Notes",
                 columns: table => new
                 {
                     Id = table.Column<int>(type: "int", nullable: false)
@@ -61,23 +61,23 @@ namespace EvernoteClone.Migrations
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_notes", x => x.Id);
+                    table.PrimaryKey("PK_Notes", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_notes_notebooks_NotebookId",
+                        name: "FK_Notes_Notebooks_NotebookId",
                         column: x => x.NotebookId,
-                        principalTable: "notebooks",
+                        principalTable: "Notebooks",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                 });
 
             migrationBuilder.CreateIndex(
-                name: "IX_notebooks_UserId",
-                table: "notebooks",
+                name: "IX_Notebooks_UserId",
+                table: "Notebooks",
                 column: "UserId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_notes_NotebookId",
-                table: "notes",
+                name: "IX_Notes_NotebookId",
+                table: "Notes",
                 column: "NotebookId");
         }
 
@@ -85,13 +85,13 @@ namespace EvernoteClone.Migrations
         protected override void Down(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.DropTable(
-                name: "notes");
+                name: "Notes");
 
             migrationBuilder.DropTable(
-                name: "notebooks");
+                name: "Notebooks");
 
             migrationBuilder.DropTable(
-                name: "users");
+                name: "Users");
         }
     }
 }
