@@ -8,17 +8,17 @@ using System.ComponentModel;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Windows;
 
 namespace EvernoteClone.ViewModel
 {
-    internal class NotesVM : INotifyPropertyChanged
+    public class NotesVM : INotifyPropertyChanged
     {
         DatabaseHelperContext _repository = new DatabaseHelperContext();
         public ObservableCollection<Notebook> Notebooks { get; set; }
         public ObservableCollection<Note> Notes { get; set; }
 
         private Notebook selectedNotebook;
-
         public Notebook SelectedNotebook
         {
             get { return selectedNotebook; }
@@ -29,9 +29,22 @@ namespace EvernoteClone.ViewModel
                 GetNotes();
             }
         }
-       
+        private Visibility isVisible;
+
+        public Visibility IsVisible
+        {
+            get { return isVisible; }
+            set
+            {
+                isVisible = value;
+                OnPropertyChanged(nameof(IsVisible));
+            }
+        }
+
         public NewNotebookCommand NewNotebookCommand { get; set; }
         public NewNoteCommand NewNoteCommand { get; set; }
+        public EditCommand EditCommand { get; set; }
+        public EndEditingCommand EndEditingCommand { get; set; }
 
         public event PropertyChangedEventHandler? PropertyChanged;
 
@@ -39,9 +52,13 @@ namespace EvernoteClone.ViewModel
         {
             NewNoteCommand = new NewNoteCommand(this);
             NewNotebookCommand = new NewNotebookCommand(this);
+            EditCommand = new EditCommand(this);
+            EndEditingCommand = new EndEditingCommand(this);
 
             Notebooks = new ObservableCollection<Notebook>();
             Notes = new ObservableCollection<Note>();
+
+            IsVisible = Visibility.Collapsed;
             GetNotebooks();
         }
 
@@ -57,7 +74,7 @@ namespace EvernoteClone.ViewModel
                     Username = "pashamed",
                     Password = "asda"
                 }
-                
+
             };
             _repository.Add(notebook);
             _repository.SaveChanges();
@@ -71,7 +88,7 @@ namespace EvernoteClone.ViewModel
                 Notebook = notebook,
                 CreatedAt = DateTime.Now,
                 UpdatedAt = DateTime.Now,
-                Title = $"Note for {DateTime.Now.ToString()}",
+                Title = $"Note for {DateTime.Now.Date.ToShortDateString()}",
                 FileLocation = "location"
             };
             _repository.Add(note);
@@ -108,6 +125,18 @@ namespace EvernoteClone.ViewModel
         private void OnPropertyChanged(string propertyName)
         {
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+        }
+
+        public void StartEditing()
+        {
+            IsVisible = Visibility.Visible;
+        }
+
+        public void StopEditing(Notebook notebook)
+        {
+            IsVisible = Visibility.Collapsed;
+            _repository.Update(notebook);
+            GetNotebooks();
         }
     }
 }

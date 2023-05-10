@@ -1,4 +1,5 @@
-﻿using System;
+﻿using EvernoteClone.Model;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -7,22 +8,28 @@ using System.Windows.Input;
 
 namespace EvernoteClone.ViewModel.Commands
 {
-    public class RegisterCommand : ICommand
+    public class EndEditingCommand : ICommand
     {
-        public LoginVM VM { get; set; }
         public event EventHandler? CanExecuteChanged;
 
-        public RegisterCommand(LoginVM vM) => VM = vM;
+        public NotesVM VM { get; set; }
+
+        public EndEditingCommand(NotesVM vM)
+        {
+            VM = vM;
+        }
 
         public bool CanExecute(object? parameter)
         {
-            throw new NotImplementedException();
+            return true;
         }
 
         public void Execute(object? parameter)
         {
-            //TODO: Login Functionality
-            throw new NotImplementedException();
+            if(parameter as Notebook is not null)
+            {
+                VM.StopEditing(parameter as Notebook);
+            }
         }
     }
 }

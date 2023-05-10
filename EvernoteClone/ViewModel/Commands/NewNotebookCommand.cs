@@ -7,7 +7,7 @@ using System.Windows.Input;
 
 namespace EvernoteClone.ViewModel.Commands
 {
-    internal class NewNotebookCommand : ICommand
+    public class NewNotebookCommand : ICommand
     {
         public NotesVM VM { get; set; }
 
