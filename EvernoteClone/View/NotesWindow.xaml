@@ -65,6 +65,7 @@
         </ListView>
         <ListView DockPanel.Dock="Left"
                   Width="200"
+                  SelectedValue="{Binding SelectedNote, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
                   ItemsSource="{Binding Notes}" d:ItemsSource="{d:SampleData ItemCount=5}">
             <ListView.ItemTemplate>
                 <DataTemplate>
@@ -98,16 +99,19 @@
                           Width="50"
                           IsEditable="True"
                           TextBoxBase.TextChanged="fontSizeComboBox_TextChanged"/>
+                <Button Content="Save"
+                        Click="Button_Click"/>
             </ToolBar>
         </ToolBarTray>
         <Grid DockPanel.Dock="Left">
             <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="27*"/>
-                <ColumnDefinition Width="7*"/>
-                <ColumnDefinition Width="486*"/>
+                <ColumnDefinition Width="24*"/>
+                <ColumnDefinition Width="6*"/>
+                <ColumnDefinition Width="165*"/>
+                <ColumnDefinition Width="265*"/>
             </Grid.ColumnDefinitions>
             <RichTextBox x:Name="contentRichTextBox"
-                         TextChanged="contentRichTextBox_TextChanged" Grid.ColumnSpan="3"
+                         TextChanged="contentRichTextBox_TextChanged" Grid.ColumnSpan="4"
                          SelectionChanged="contentRichTextBox_SelectionChanged"/>
         </Grid>
     </DockPanel>
