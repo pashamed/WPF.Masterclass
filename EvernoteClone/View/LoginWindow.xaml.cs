@@ -1,4 +1,5 @@
-﻿using System;
+﻿using EvernoteClone.ViewModel;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -19,9 +20,19 @@ namespace EvernoteClone.View
     /// </summary>
     public partial class Login : Window
     {
+        LoginVM? vm;
+
         public Login()
         {
             InitializeComponent();
+
+            vm = Resources["vm"] as LoginVM;
+            vm.Authenticated += Vm_Authenticated;
+        }
+
+        private void Vm_Authenticated(object? sender, EventArgs e)
+        {
+            Close();
         }
     }
 }
