@@ -41,6 +41,17 @@ namespace EvernoteClone.View
             fontSizeComboBox.ItemsSource = new List<double>() { 8,9,10,11,12,14,16,28,48};
         }
 
+        protected override void OnActivated(EventArgs e)
+        {
+            base.OnActivated(e);
+            if(string.IsNullOrEmpty(App.UserId) )
+            {
+                Login loginWindow = new Login();
+                loginWindow.ShowDialog();
+                VM.GetNotebooks();
+            }
+        }
+
         private void VM_NoteChanged(object? sender, Model.Note e)
         {
             contentRichTextBox.Document.Blocks.Clear();

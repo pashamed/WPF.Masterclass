@@ -89,7 +89,6 @@ namespace EvernoteClone.ViewModel
                     Username = "pashamed",
                     Password = "asda"
                 }
-
             };
             _repository.Add(notebook);
             _repository.SaveChanges();
@@ -111,7 +110,7 @@ namespace EvernoteClone.ViewModel
             GetNotes();
         }
 
-        private void GetNotebooks()
+        public void GetNotebooks()
         {
             var notebooks = from c in _repository.Notebooks
                             select c;
