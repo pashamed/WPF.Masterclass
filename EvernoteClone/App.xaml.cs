@@ -1,4 +1,5 @@
-﻿using System;
+﻿using EvernoteClone.Model;
+using System;
 using System.Collections.Generic;
 using System.Configuration;
 using System.Data;
@@ -13,6 +14,6 @@ namespace EvernoteClone
     /// </summary>
     public partial class App : Application
     {
-        public static string UserId = string.Empty;
+        public static User CurrentUser;
     }
 }

@@ -82,13 +82,9 @@ namespace EvernoteClone.ViewModel
             Notebook notebook = new Notebook()
             {
                 Name = "Notebook",
-                User = new User
-                {
-                    Name = "Pavlo",
-                    Lastname = "Med",
-                    Username = "pashamed",
-                    Password = "asda"
-                }
+                User = (from c in _repository.Users
+                        where c == App.CurrentUser
+                        select c).FirstOrDefault()
             };
             _repository.Add(notebook);
             _repository.SaveChanges();
@@ -113,6 +109,7 @@ namespace EvernoteClone.ViewModel
         public void GetNotebooks()
         {
             var notebooks = from c in _repository.Notebooks
+                            where c.User == App.CurrentUser
                             select c;
             Notebooks.Clear();
             foreach (var notebook in notebooks)

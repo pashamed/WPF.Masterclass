@@ -14,6 +14,7 @@ namespace EvernoteClone.ViewModel.Helpers
     public class FirebaseAuthHelper
     {
         private static string api_key = "AIzaSyAVRIqmjrfLQRXx4naIqBf_26-1ehDcNGo";
+        static DatabaseHelperContext _repository = new DatabaseHelperContext();
 
         public async static Task<bool> RegisterAsync(User user)
         {
@@ -34,7 +35,17 @@ namespace EvernoteClone.ViewModel.Helpers
                 {
                     string resultJson = await response.Content.ReadAsStringAsync();
                     var result = JsonSerializer.Deserialize<FirebaseResult>(resultJson);
-                    App.UserId = result.localId;
+                    User newUser = new User()
+                    {
+                        Username = user.Username,
+                        Password = user.Password,
+                        UserId = result.localId,
+                        Name = user.Name is null ? null : user.Name,
+                        Lastname = user.Lastname is null ? null : user.Lastname,
+                    };
+                    App.CurrentUser = newUser;
+                    _repository.Add(newUser);
+                    await _repository.SaveChangesAsync();
                     return true;
                 }
                 else
@@ -65,8 +76,24 @@ namespace EvernoteClone.ViewModel.Helpers
                 if (response.IsSuccessStatusCode)
                 {
                     string resultJson = await response.Content.ReadAsStringAsync();
-                    var result = JsonSerializer.Deserialize<FirebaseResult>(resultJson);
-                    App.UserId = result.localId;
+                    var result = JsonSerializer.Deserialize<FirebaseResult>(resultJson);                   
+                    App.CurrentUser = (from c in _repository.Users
+                                      where c.UserId == result.localId
+                                      select c).FirstOrDefault();
+                    if(App.CurrentUser == null)
+                    {
+                        User newUser = new User()
+                        {
+                            Username = user.Username,
+                            Password = user.Password,
+                            UserId = result.localId,
+                            Name = user.Name is null ? null : user.Name,
+                            Lastname = user.Lastname is null ? null : user.Lastname,
+                        };
+                        _repository.Add(newUser);
+                        await _repository.SaveChangesAsync();
+                        App.CurrentUser = newUser;
+                    }
                     return true;
                 }
                 else
