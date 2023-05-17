@@ -7,10 +7,11 @@ using System.Text;
 
 namespace EvernoteClone.Model
 {
-    public class Notebook
+    public class Notebook: IEntity<string>
     {
         [Key]
-        public int Id { get; set; }
+        [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
+        public string Id { get; set; }
         public User User { get; set; }
         public string Name { get; set; }
     }

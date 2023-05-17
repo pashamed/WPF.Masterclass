@@ -88,7 +88,7 @@ namespace EvernoteClone.ViewModel
 
         public async void Login()
         {
-            bool result = await FirebaseAuthHelper.LoginAsync(User);
+            bool result = await FirebaseAuthHelper.LoginAsync(User);        
             if (result)
             {
                 Authenticated?.Invoke(this, EventArgs.Empty);

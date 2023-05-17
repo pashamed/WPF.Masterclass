@@ -159,7 +159,7 @@ namespace EvernoteClone.View
             contentRichTextBox.Selection.ApplyPropertyValue(Inline.FontSizeProperty, fontSizeComboBox.Text);
         }
 
-        private void Button_Click(object sender, RoutedEventArgs e)
+        private async void Button_Click(object sender, RoutedEventArgs e)
         {
             string rtfFile = System.IO.Path.Combine(Environment.CurrentDirectory, $"{VM.SelectedNote.Id}.rtf");
             VM.SelectedNote.FileLocation = rtfFile;
@@ -168,7 +168,7 @@ namespace EvernoteClone.View
             contents.Save(fileStream, DataFormats.Rtf);
             fileStream.Close();
 
-            VM.SaveToDb();
+            await VM.SaveToDb();
         }
     }
 }

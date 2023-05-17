@@ -24,11 +24,9 @@ namespace EvernoteClone.Migrations
 
             modelBuilder.Entity("EvernoteClone.Model.Note", b =>
                 {
-                    b.Property<int>("Id")
+                    b.Property<string>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+                        .HasColumnType("nvarchar(450)");
 
                     b.Property<DateTime>("CreatedAt")
                         .HasColumnType("datetime2");
@@ -37,8 +35,9 @@ namespace EvernoteClone.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<int>("NotebookId")
-                        .HasColumnType("int");
+                    b.Property<string>("NotebookId")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(450)");
 
                     b.Property<string>("Title")
                         .IsRequired()
@@ -56,11 +55,9 @@ namespace EvernoteClone.Migrations
 
             modelBuilder.Entity("EvernoteClone.Model.Notebook", b =>
                 {
-                    b.Property<int>("Id")
+                    b.Property<string>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+                        .HasColumnType("nvarchar(450)");
 
                     b.Property<string>("Name")
                         .IsRequired()
@@ -78,7 +75,7 @@ namespace EvernoteClone.Migrations
 
             modelBuilder.Entity("EvernoteClone.Model.User", b =>
                 {
-                    b.Property<string>("UserId")
+                    b.Property<string>("Id")
                         .HasMaxLength(150)
                         .HasColumnType("nvarchar(150)");
 
@@ -100,7 +97,7 @@ namespace EvernoteClone.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.HasKey("UserId");
+                    b.HasKey("Id");
 
                     b.ToTable("Users");
                 });

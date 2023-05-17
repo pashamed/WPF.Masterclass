@@ -6,6 +6,7 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Linq;
+using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
@@ -15,6 +16,8 @@ namespace EvernoteClone.ViewModel
     public class NotesVM : INotifyPropertyChanged
     {
         DatabaseHelperContext _repository = new DatabaseHelperContext();
+        MsSqlDbProvider _MsDbProvider = new MsSqlDbProvider();
+        FirebaseDbProvider _FirebaseDbProvider = new FirebaseDbProvider();
         public ObservableCollection<Notebook> Notebooks { get; set; }
         public ObservableCollection<Note> Notes { get; set; }
 
@@ -77,32 +80,29 @@ namespace EvernoteClone.ViewModel
             GetNotebooks();
         }
 
-        public void CreateNotebook()
+        public async void CreateNotebook()
         {
             Notebook notebook = new Notebook()
             {
                 Name = "Notebook",
-                User = (from c in _repository.Users
-                        where c == App.CurrentUser
-                        select c).FirstOrDefault()
+                User = await _MsDbProvider.GetById<User>(App.CurrentUser.Id)
             };
-            _repository.Add(notebook);
-            _repository.SaveChanges();
+            var saved = await _MsDbProvider.Create(notebook);
+            if(saved) selectedNotebook = notebook;
             GetNotebooks();
         }
 
-        public void CreateNote(Notebook notebook)
+        public async void CreateNote(Notebook notebook)
         {
             Note note = new Note()
             {
-                Notebook = notebook,
+                Notebook = await _MsDbProvider.GetById<Notebook>(notebook.Id),
                 CreatedAt = DateTime.Now,
                 UpdatedAt = DateTime.Now,
                 Title = $"Note for {DateTime.Now.Date.ToShortDateString()}",
                 FileLocation = "location"
             };
-            _repository.Add(note);
-            _repository.SaveChanges();
+            await _MsDbProvider.Create(note);
             GetNotes();
         }
 
@@ -153,6 +153,6 @@ namespace EvernoteClone.ViewModel
         public async Task SaveToDb()
         {
             await _repository.SaveChangesAsync();
-        }
+        }       
     }
 }

@@ -39,7 +39,7 @@ namespace EvernoteClone.ViewModel.Helpers
                     {
                         Username = user.Username,
                         Password = user.Password,
-                        UserId = result.localId,
+                        Id = result.localId,
                         Name = user.Name is null ? null : user.Name,
                         Lastname = user.Lastname is null ? null : user.Lastname,
                     };
@@ -78,7 +78,7 @@ namespace EvernoteClone.ViewModel.Helpers
                     string resultJson = await response.Content.ReadAsStringAsync();
                     var result = JsonSerializer.Deserialize<FirebaseResult>(resultJson);                   
                     App.CurrentUser = (from c in _repository.Users
-                                      where c.UserId == result.localId
+                                      where c.Id == result.localId
                                       select c).FirstOrDefault();
                     if(App.CurrentUser == null)
                     {
@@ -86,13 +86,13 @@ namespace EvernoteClone.ViewModel.Helpers
                         {
                             Username = user.Username,
                             Password = user.Password,
-                            UserId = result.localId,
+                            Id = result.localId,
                             Name = user.Name is null ? null : user.Name,
                             Lastname = user.Lastname is null ? null : user.Lastname,
                         };
                         _repository.Add(newUser);
-                        await _repository.SaveChangesAsync();
                         App.CurrentUser = newUser;
+                        await _repository.SaveChangesAsync();                       
                     }
                     return true;
                 }

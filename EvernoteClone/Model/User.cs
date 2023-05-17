@@ -2,14 +2,15 @@
 using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
+using System.IO.Packaging;
 using System.Text;
 
 namespace EvernoteClone.Model
 {
-    public class User
+    public class User : IEntity<string> 
     {
         [MaxLength(150)]
-        public string UserId { get; set; }
+        public string Id { get; set; }
         [MaxLength(50)]
         public string? Name { get; set; }
         [MaxLength(50)]
@@ -17,5 +18,10 @@ namespace EvernoteClone.Model
         public string Username { get; set; }
         public string? Password { get; set; }
         public string? ConfirmPassword { get; set; }
+    }
+
+    public interface IEntity<T>
+    {
+        public T Id { get; set; }
     }
 }
