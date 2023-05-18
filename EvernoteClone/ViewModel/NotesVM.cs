@@ -1,4 +1,5 @@
 ﻿using EvernoteClone.Model;
+using EvernoteClone.View;
 using EvernoteClone.ViewModel.Commands;
 using EvernoteClone.ViewModel.Helpers;
 using System;
@@ -77,7 +78,6 @@ namespace EvernoteClone.ViewModel
             Notes = new ObservableCollection<Note>();
 
             IsVisible = Visibility.Collapsed;
-            GetNotebooks();
         }
 
         public async void CreateNotebook()
@@ -87,8 +87,11 @@ namespace EvernoteClone.ViewModel
                 Name = "Notebook",
                 User = await _MsDbProvider.GetById<User>(App.CurrentUser.Id)
             };
-            var saved = await _MsDbProvider.Create(notebook);
-            if(saved) selectedNotebook = notebook;
+            (bool, bool) saved = (await _MsDbProvider.Create(notebook), await _FirebaseDbProvider.Create(notebook));
+            if (saved.Item1 == true && saved.Item2 == true)
+            {
+                //TO DO: show success status
+            }
             GetNotebooks();
         }
 
@@ -102,15 +105,19 @@ namespace EvernoteClone.ViewModel
                 Title = $"Note for {DateTime.Now.Date.ToShortDateString()}",
                 FileLocation = "location"
             };
-            await _MsDbProvider.Create(note);
+            (bool, bool) saved = (await _MsDbProvider.Create(note), await _FirebaseDbProvider.Create(note));
+            if (saved.Item1 == true && saved.Item2 == true)
+            {
+                //TO DO: show success status
+            }
             GetNotes();
         }
 
-        public void GetNotebooks()
+        public async void GetNotebooks()
         {
-            var notebooks = from c in _repository.Notebooks
-                            where c.User == App.CurrentUser
-                            select c;
+            var notebooks = await _MsDbProvider.GetUserNotebooks(App.CurrentUser);
+            (List<Notebook>, List<Notebook>) compare = (await _MsDbProvider.GetAll <Notebook>(), await _FirebaseDbProvider.GetAll<Notebook>());
+            notebooks = compare.Item1.Where(x => x.User.Id == App.CurrentUser.Id).Except(compare.Item2.Where(x => x.User.Id == App.CurrentUser.Id)).ToList();
             Notebooks.Clear();
             foreach (var notebook in notebooks)
             {
@@ -146,13 +153,13 @@ namespace EvernoteClone.ViewModel
         public void StopEditing(Notebook notebook)
         {
             IsVisible = Visibility.Collapsed;
-            _repository.Update(notebook);
+            _MsDbProvider.Update(notebook);
             GetNotebooks();
         }
 
         public async Task SaveToDb()
         {
             await _repository.SaveChangesAsync();
-        }       
+        }
     }
 }

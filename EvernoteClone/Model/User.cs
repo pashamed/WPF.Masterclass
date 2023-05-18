@@ -7,7 +7,7 @@ using System.Text;
 
 namespace EvernoteClone.Model
 {
-    public class User : IEntity<string> 
+    public class User : IHasId<string> 
     {
         [MaxLength(150)]
         public string Id { get; set; }
@@ -20,7 +20,7 @@ namespace EvernoteClone.Model
         public string? ConfirmPassword { get; set; }
     }
 
-    public interface IEntity<T>
+    public interface IHasId<T>
     {
         public T Id { get; set; }
     }

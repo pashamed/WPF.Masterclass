@@ -6,12 +6,12 @@ using System.Text;
 
 namespace EvernoteClone.Model
 {
-    public class Note : IEntity<string>
+    public class Note : IHasId<string>
     {
         [Key]
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         public string Id { get; set; }
-        public Notebook Notebook { get; set; }
+        public virtual Notebook Notebook { get; set; }
         public string Title { get; set; }
         public DateTime CreatedAt { get; set; }
         public DateTime UpdatedAt { get; set; }
