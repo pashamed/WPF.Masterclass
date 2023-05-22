@@ -1,11 +1,8 @@
 ﻿using EvernoteClone.Model;
-using System.Text.Json;
-using System.Text.Json.Serialization;
-using System;
-using System.Collections.Generic;
 using System.Linq;
 using System.Net.Http;
 using System.Text;
+using System.Text.Json;
 using System.Threading.Tasks;
 using System.Windows;
 
@@ -13,10 +10,10 @@ namespace EvernoteClone.ViewModel.Helpers
 {
     public class FirebaseAuthHelper
     {
-        private static string api_key = "AIzaSyAVRIqmjrfLQRXx4naIqBf_26-1ehDcNGo";
-        static DatabaseHelperContext _repository = new DatabaseHelperContext();
+        private static string api_key = "your_firebase_auth_key";
+        private static DatabaseHelperContext _repository = new DatabaseHelperContext();
 
-        public async static Task<bool> RegisterAsync(User user)
+        public static async Task<bool> RegisterAsync(User user)
         {
             using (HttpClient client = new HttpClient())
             {
@@ -58,7 +55,7 @@ namespace EvernoteClone.ViewModel.Helpers
             }
         }
 
-        public async static Task<bool> LoginAsync(User user)
+        public static async Task<bool> LoginAsync(User user)
         {
             using (HttpClient client = new HttpClient())
             {
@@ -76,11 +73,11 @@ namespace EvernoteClone.ViewModel.Helpers
                 if (response.IsSuccessStatusCode)
                 {
                     string resultJson = await response.Content.ReadAsStringAsync();
-                    var result = JsonSerializer.Deserialize<FirebaseResult>(resultJson);                   
+                    var result = JsonSerializer.Deserialize<FirebaseResult>(resultJson);
                     App.CurrentUser = (from c in _repository.Users
-                                      where c.Id == result.localId
-                                      select c).FirstOrDefault();
-                    if(App.CurrentUser == null)
+                                       where c.Id == result.localId
+                                       select c).FirstOrDefault();
+                    if (App.CurrentUser == null)
                     {
                         User newUser = new User()
                         {
@@ -92,7 +89,7 @@ namespace EvernoteClone.ViewModel.Helpers
                         };
                         _repository.Add(newUser);
                         App.CurrentUser = newUser;
-                        await _repository.SaveChangesAsync();                       
+                        await _repository.SaveChangesAsync();
                     }
                     return true;
                 }

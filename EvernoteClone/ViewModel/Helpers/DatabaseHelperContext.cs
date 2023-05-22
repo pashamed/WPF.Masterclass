@@ -2,9 +2,7 @@
 using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Net.Http;
-using System.Reflection.Metadata;
 using System.Text;
 using System.Text.Json;
 using System.Threading.Tasks;
@@ -13,12 +11,13 @@ namespace EvernoteClone.ViewModel.Helpers
 {
     internal class DatabaseHelperContext : DbContext
     {
-
         public DbSet<Note> Notes { get; set; }
         public DbSet<User> Users { get; set; }
         public DbSet<Notebook> Notebooks { get; set; }
 
-        public DatabaseHelperContext() : base() { }
+        public DatabaseHelperContext() : base()
+        {
+        }
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
@@ -30,17 +29,19 @@ namespace EvernoteClone.ViewModel.Helpers
     public interface IAppEntity<T> where T : class, IHasId<string>
     {
         public Task<bool> Create<T>(T entity);
+
         public Task<bool> Update<T>(T entity) where T : class, IHasId<string>;
+
         public Task<bool> Delete<T>(T entity) where T : class, IHasId<string>;
+
         public Task<List<T>> GetAll<T>() where T : class;
+
         public Task<T> GetById<T>(string id) where T : class, IHasId<string>;
     }
 
-
-
     public class MsSqlDbProvider : IAppEntity<IHasId<string>>
     {
-        private DatabaseHelperContext _repository;
+        private readonly DatabaseHelperContext _repository;
 
         public MsSqlDbProvider()
         {
@@ -59,7 +60,7 @@ namespace EvernoteClone.ViewModel.Helpers
             _repository.Remove<TEntity>(entity);
             if (await _repository.SaveChangesAsync() > 0)
                 return true;
-            else 
+            else
                 return false;
         }
 
@@ -70,8 +71,6 @@ namespace EvernoteClone.ViewModel.Helpers
                 return true;
             else
                 return false;
-
-
         }
 
         public async Task<List<TEntity>> GetAll<TEntity>() where TEntity : class

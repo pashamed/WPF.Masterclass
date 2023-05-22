@@ -2,19 +2,15 @@
 using EvernoteClone.ViewModel.Commands;
 using EvernoteClone.ViewModel.Helpers;
 using System;
-using System.Collections.Generic;
 using System.ComponentModel;
-using System.Linq;
 using System.Runtime.CompilerServices;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows;
 
 namespace EvernoteClone.ViewModel
 {
     public class LoginVM : INotifyPropertyChanged
     {
-        DatabaseHelperContext _repository;
+        private DatabaseHelperContext _repository;
         private bool isShowingRegister = false;
         private User? user;
 
@@ -29,6 +25,7 @@ namespace EvernoteClone.ViewModel
         }
 
         private Visibility loginVis;
+
         public Visibility LoginVis
         {
             get { return loginVis; }
@@ -40,6 +37,7 @@ namespace EvernoteClone.ViewModel
         }
 
         private Visibility registerVis;
+
         public Visibility RegisterVis
         {
             get { return registerVis; }
@@ -51,6 +49,7 @@ namespace EvernoteClone.ViewModel
         }
 
         public event PropertyChangedEventHandler? PropertyChanged;
+
         public event EventHandler Authenticated;
 
         public RegisterCommand RegisterCommand { get; set; }
@@ -68,7 +67,6 @@ namespace EvernoteClone.ViewModel
 
             User = new User();
             _repository = new DatabaseHelperContext();
-
         }
 
         public void SwitchViews()
@@ -88,7 +86,7 @@ namespace EvernoteClone.ViewModel
 
         public async void Login()
         {
-            bool result = await FirebaseAuthHelper.LoginAsync(User);        
+            bool result = await FirebaseAuthHelper.LoginAsync(User);
             if (result)
             {
                 Authenticated?.Invoke(this, EventArgs.Empty);
@@ -96,7 +94,7 @@ namespace EvernoteClone.ViewModel
         }
 
         public async void RegisterAsync()
-        {           
+        {
             bool result = await FirebaseAuthHelper.RegisterAsync(User);
             User = App.CurrentUser;
             await _repository.AddAsync(User);

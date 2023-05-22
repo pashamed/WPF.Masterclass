@@ -1,5 +1,4 @@
 ﻿using EvernoteClone.Model;
-using EvernoteClone.View;
 using EvernoteClone.ViewModel.Commands;
 using EvernoteClone.ViewModel.Helpers;
 using System;
@@ -7,8 +6,6 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Linq;
-using System.Reflection;
-using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
 
@@ -16,13 +13,14 @@ namespace EvernoteClone.ViewModel
 {
     public class NotesVM : INotifyPropertyChanged
     {
-        DatabaseHelperContext _repository = new DatabaseHelperContext();
-        MsSqlDbProvider _MsDbProvider = new MsSqlDbProvider();
-        FirebaseDbProvider _FirebaseDbProvider = new FirebaseDbProvider();
+        private DatabaseHelperContext _repository = new DatabaseHelperContext();
+        private MsSqlDbProvider _MsDbProvider = new MsSqlDbProvider();
+        private FirebaseDbProvider _FirebaseDbProvider = new FirebaseDbProvider();
         public ObservableCollection<Notebook> Notebooks { get; set; }
         public ObservableCollection<Note> Notes { get; set; }
 
         private Notebook selectedNotebook;
+
         public Notebook SelectedNotebook
         {
             get { return selectedNotebook; }
@@ -33,6 +31,7 @@ namespace EvernoteClone.ViewModel
                 GetNotes();
             }
         }
+
         private Note selectedNote;
 
         public Note SelectedNote
@@ -45,7 +44,6 @@ namespace EvernoteClone.ViewModel
                 NoteChanged?.Invoke(this, this.selectedNote);
             }
         }
-
 
         private Visibility isVisible;
 
@@ -65,6 +63,7 @@ namespace EvernoteClone.ViewModel
         public EndEditingCommand EndEditingCommand { get; set; }
 
         public event PropertyChangedEventHandler? PropertyChanged;
+
         public event EventHandler<Note> NoteChanged;
 
         public NotesVM()
@@ -115,7 +114,7 @@ namespace EvernoteClone.ViewModel
 
         public async void GetNotebooks()
         {
-            (List<Notebook>, List<Notebook>) compare = (await _MsDbProvider.GetAll <Notebook>(), await _FirebaseDbProvider.GetAll<Notebook>());
+            (List<Notebook>, List<Notebook>) compare = (await _MsDbProvider.GetAll<Notebook>(), await _FirebaseDbProvider.GetAll<Notebook>());
             var notebooks = compare.Item1.Where(x => x.User.Id == App.CurrentUser.Id).Except(compare.Item2.Where(x => x.User.Id == App.CurrentUser.Id)).ToList();
             Notebooks.Clear();
             foreach (var notebook in notebooks)
