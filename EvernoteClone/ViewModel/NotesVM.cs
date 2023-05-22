@@ -115,9 +115,8 @@ namespace EvernoteClone.ViewModel
 
         public async void GetNotebooks()
         {
-            var notebooks = await _MsDbProvider.GetUserNotebooks(App.CurrentUser);
             (List<Notebook>, List<Notebook>) compare = (await _MsDbProvider.GetAll <Notebook>(), await _FirebaseDbProvider.GetAll<Notebook>());
-            notebooks = compare.Item1.Where(x => x.User.Id == App.CurrentUser.Id).Except(compare.Item2.Where(x => x.User.Id == App.CurrentUser.Id)).ToList();
+            var notebooks = compare.Item1.Where(x => x.User.Id == App.CurrentUser.Id).Except(compare.Item2.Where(x => x.User.Id == App.CurrentUser.Id)).ToList();
             Notebooks.Clear();
             foreach (var notebook in notebooks)
             {
@@ -125,13 +124,12 @@ namespace EvernoteClone.ViewModel
             }
         }
 
-        private void GetNotes()
+        private async void GetNotes()
         {
             if (SelectedNotebook != null)
             {
-                var notes = from c in _repository.Notes
-                            where c.Notebook == SelectedNotebook
-                            select c;
+                (List<Note>, List<Note>) compare = (await _MsDbProvider.GetAll<Note>(), await _FirebaseDbProvider.GetAll<Note>());
+                var notes = compare.Item1.Where(x => x.Notebook.Id == selectedNotebook.Id).Except(compare.Item2.Where(x => x.Notebook.Id == selectedNotebook.Id)).ToList();
                 Notes.Clear();
                 foreach (var note in notes)
                 {
@@ -150,10 +148,11 @@ namespace EvernoteClone.ViewModel
             IsVisible = Visibility.Visible;
         }
 
-        public void StopEditing(Notebook notebook)
+        public async void StopEditing(Notebook notebook)
         {
             IsVisible = Visibility.Collapsed;
-            _MsDbProvider.Update(notebook);
+            await _MsDbProvider.Update(notebook);
+            await _FirebaseDbProvider.Update(notebook);
             GetNotebooks();
         }
 

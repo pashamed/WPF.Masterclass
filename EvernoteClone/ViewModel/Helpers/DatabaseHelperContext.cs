@@ -30,13 +30,13 @@ namespace EvernoteClone.ViewModel.Helpers
     public interface IAppEntity<T> where T : class, IHasId<string>
     {
         public Task<bool> Create<T>(T entity);
-        public void Update<T>(T entity) where T : class;
-        public void Delete<T>(T entity) where T : class;
+        public Task<bool> Update<T>(T entity) where T : class, IHasId<string>;
+        public Task<bool> Delete<T>(T entity) where T : class, IHasId<string>;
         public Task<List<T>> GetAll<T>() where T : class;
         public Task<T> GetById<T>(string id) where T : class, IHasId<string>;
     }
 
-    
+
 
     public class MsSqlDbProvider : IAppEntity<IHasId<string>>
     {
@@ -54,16 +54,24 @@ namespace EvernoteClone.ViewModel.Helpers
             return result > 0 ? true : false;
         }
 
-        public async void Delete<TEntity>(TEntity entity) where TEntity : class
+        public async Task<bool> Delete<TEntity>(TEntity entity) where TEntity : class, IHasId<string>
         {
             _repository.Remove<TEntity>(entity);
-            await _repository.SaveChangesAsync();
+            if (await _repository.SaveChangesAsync() > 0)
+                return true;
+            else 
+                return false;
         }
 
-        public async void Update<TEntity>(TEntity entity) where TEntity : class
+        public async Task<bool> Update<TEntity>(TEntity entity) where TEntity : class, IHasId<string>
         {
             _repository.Update<TEntity>(entity);
-            await _repository.SaveChangesAsync();
+            if (await _repository.SaveChangesAsync() > 0)
+                return true;
+            else
+                return false;
+
+
         }
 
         public async Task<List<TEntity>> GetAll<TEntity>() where TEntity : class
@@ -73,13 +81,7 @@ namespace EvernoteClone.ViewModel.Helpers
 
         public async Task<T> GetById<T>(string id) where T : class, IHasId<string>
         {
-            return await _repository.Set<T>().SingleAsync(x => x.Id == id );
-        }
-
-        public async Task<List<Notebook>> GetUserNotebooks(User user)
-        {
-            IQueryable<Notebook> querry = _repository.Notebooks.AsQueryable();
-            return await querry.Where(x => x.User == user).ToListAsync();
+            return await _repository.Set<T>().SingleAsync(x => x.Id == id);
         }
     }
 
@@ -101,13 +103,26 @@ namespace EvernoteClone.ViewModel.Helpers
                 else
                 {
                     return false;
-                }                   
+                }
             }
         }
 
-        public void Delete<TEntity>(TEntity app) where TEntity : class
+        public async Task<bool> Delete<TEntity>(TEntity entity) where TEntity : class, IHasId<string>
         {
-            throw new NotImplementedException();
+            var jsonBody = JsonSerializer.Serialize<TEntity>(entity);
+            var content = new StringContent(jsonBody, Encoding.UTF8, "application/json") { };
+            using (HttpClient httpClient = new HttpClient())
+            {
+                var result = await httpClient.DeleteAsync($"{dbPath}{entity.GetType().Name.ToLower()}/{entity.Id}.json");
+                if (result.IsSuccessStatusCode)
+                {
+                    return true;
+                }
+                else
+                {
+                    return false;
+                }
+            }
         }
 
         public async Task<List<TEntity>> GetAll<TEntity>() where TEntity : class
@@ -119,13 +134,13 @@ namespace EvernoteClone.ViewModel.Helpers
                 {
                     jsonResult = await httpClient.GetStringAsync($"{dbPath}{typeof(TEntity).Name.ToLower()}.json");
                 }
-                catch(HttpRequestException ex)
+                catch (HttpRequestException ex)
                 {
                     return null;
-                }               
-                var entities = JsonSerializer.Deserialize<Dictionary<string,TEntity>>(jsonResult);
+                }
+                var entities = JsonSerializer.Deserialize<Dictionary<string, TEntity>>(jsonResult);
                 List<TEntity> list = new List<TEntity>();
-                foreach(var e in entities)
+                foreach (var e in entities)
                 {
                     list.Add(e.Value);
                 }
@@ -138,9 +153,22 @@ namespace EvernoteClone.ViewModel.Helpers
             throw new NotImplementedException();
         }
 
-        public void Update<TEntity>(TEntity app) where TEntity : class
+        public async Task<bool> Update<TEntity>(TEntity entity) where TEntity : class, IHasId<string>
         {
-            throw new NotImplementedException();
+            var jsonBody = JsonSerializer.Serialize<TEntity>(entity);
+            var content = new StringContent(jsonBody, Encoding.UTF8, "application/json") { };
+            using (HttpClient httpClient = new HttpClient())
+            {
+                var result = await httpClient.PatchAsync($"{dbPath}{entity.GetType().Name.ToLower()}/{entity.Id}.json", content);
+                if (result.IsSuccessStatusCode)
+                {
+                    return true;
+                }
+                else
+                {
+                    return false;
+                }
+            }
         }
     }
 }
