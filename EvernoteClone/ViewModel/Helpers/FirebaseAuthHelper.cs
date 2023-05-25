@@ -11,7 +11,7 @@ namespace EvernoteClone.ViewModel.Helpers
     public class FirebaseAuthHelper
     {
         private static string api_key = "your_firebase_auth_key";
-        private static DatabaseHelperContext _repository = new DatabaseHelperContext();
+        static DatabaseHelperContext _repository = new DatabaseHelperContext();
 
         public static async Task<bool> RegisterAsync(User user)
         {
