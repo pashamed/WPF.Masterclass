@@ -5,9 +5,11 @@ using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
+using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 using System.Windows;
+using System.Windows.Media.Animation;
 
 namespace EvernoteClone.ViewModel
 {
@@ -45,22 +47,37 @@ namespace EvernoteClone.ViewModel
             }
         }
 
-        private Visibility isVisible;
+        private Visibility isNotebookVisible;
 
-        public Visibility IsVisible
+        public Visibility IsNotebookVisible
         {
-            get { return isVisible; }
+            get { return isNotebookVisible; }
             set
             {
-                isVisible = value;
-                OnPropertyChanged(nameof(IsVisible));
+                isNotebookVisible = value;
+                OnPropertyChanged(nameof(isNotebookVisible));
             }
         }
+
+        private Visibility isNoteVisible;
+
+        public Visibility IsNoteVisible
+        {
+            get { return isNoteVisible; }
+            set
+            {
+                isNoteVisible = value;
+                OnPropertyChanged(nameof(IsNoteVisible));
+            }
+        }
+
+
 
         public NewNotebookCommand NewNotebookCommand { get; set; }
         public NewNoteCommand NewNoteCommand { get; set; }
         public EditCommand EditCommand { get; set; }
         public EndEditingCommand EndEditingCommand { get; set; }
+        public DeleteCommand DeleteCommand { get; set; }
 
         public event PropertyChangedEventHandler? PropertyChanged;
 
@@ -72,11 +89,13 @@ namespace EvernoteClone.ViewModel
             NewNotebookCommand = new NewNotebookCommand(this);
             EditCommand = new EditCommand(this);
             EndEditingCommand = new EndEditingCommand(this);
+            DeleteCommand = new DeleteCommand(this);
 
             Notebooks = new ObservableCollection<Notebook>();
             Notes = new ObservableCollection<Note>();
 
-            IsVisible = Visibility.Collapsed;
+            IsNotebookVisible = Visibility.Collapsed;
+            IsNoteVisible = Visibility.Collapsed;
         }
 
         public async void CreateNotebook()
@@ -89,7 +108,7 @@ namespace EvernoteClone.ViewModel
             (bool, bool) saved = (await _MsDbProvider.Create(notebook), await _FirebaseDbProvider.Create(notebook));
             if (saved.Item1 == true && saved.Item2 == true)
             {
-                //TO DO: show success status
+                //TODO: show success status
             }
             GetNotebooks();
         }
@@ -142,17 +161,33 @@ namespace EvernoteClone.ViewModel
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
         }
 
-        public void StartEditing()
+        public void StartEditing(object obj)
         {
-            IsVisible = Visibility.Visible;
+            if (obj.GetType().Name == "NotebookProxy" | obj is Notebook)
+            {
+                IsNotebookVisible = Visibility.Visible;
+            }
+            if (obj.GetType().Name == "NoteProxy" | obj is Note)
+            {
+                IsNoteVisible = Visibility.Visible;
+            }
         }
 
-        public async void StopEditing(Notebook notebook)
+        public async void StopEditing<T>(T entity) where T : class, IHasId<string>
         {
-            IsVisible = Visibility.Collapsed;
-            await _MsDbProvider.Update(notebook);
-            await _FirebaseDbProvider.Update(notebook);
+            IsNotebookVisible = Visibility.Collapsed;
+            IsNoteVisible = Visibility.Collapsed;
+            await _MsDbProvider.Update<T>(entity);
+            await _FirebaseDbProvider.Update<T>(entity);
             GetNotebooks();
+        }
+
+        public async void Delete<T>(T entity) where T : class, IHasId<string>
+        {
+            await _MsDbProvider.Delete<T>(entity);
+            await _FirebaseDbProvider.Delete<T>(entity);
+            GetNotebooks();
+            GetNotes();
         }
 
         public async Task SaveToDb()

@@ -7,7 +7,14 @@
     <UseWPF>true</UseWPF>
     <Title>EvernoteClone</Title>
     <ImplicitUsings>disable</ImplicitUsings>
+    <ApplicationIcon>View\favicon.ico</ApplicationIcon>
   </PropertyGroup>
+
+  <ItemGroup>
+    <Content Include="View\favicon.ico">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+  </ItemGroup>
 
   <ItemGroup>
     <PackageReference Include="Microsoft.CognitiveServices.Speech" Version="1.28.0" />

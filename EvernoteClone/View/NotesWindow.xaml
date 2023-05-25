@@ -8,7 +8,9 @@
         xmlns:uc="clr-namespace:EvernoteClone.View.UserControls"
         xmlns:vm="clr-namespace:EvernoteClone.ViewModel"
         mc:Ignorable="d"
-        Title="Notes" Height="450" Width="800">
+        Title="Notes" 
+        Icon="favicon.ico"
+        Height="450" Width="800">
 
     <Window.Resources>
         <ResourceDictionary>
@@ -46,11 +48,15 @@
                             <uc:DisplayNotebook.ContextMenu>
                                 <ContextMenu>
                                     <MenuItem Header="Rename"
-                                              Command="{Binding Source={StaticResource vm},Path=EditCommand}" />
+                                              Command="{Binding Source={StaticResource vm},Path=EditCommand}"
+                                              CommandParameter="{Binding}"/>
+                                    <MenuItem Header="Delete"
+                                              Command="{Binding Source={StaticResource vm},Path=DeleteCommand}"
+                                              CommandParameter="{Binding}"/>
                                 </ContextMenu>
                             </uc:DisplayNotebook.ContextMenu>
                         </uc:DisplayNotebook>
-                        <TextBox Visibility="{Binding Source={StaticResource vm},Path=IsVisible}"
+                        <TextBox Visibility="{Binding Source={StaticResource vm},Path=IsNotebookVisible}"
                                  Text="{Binding Name}">
                             <i:Interaction.Triggers>
                                 <i:EventTrigger EventName="LostFocus">
@@ -65,11 +71,33 @@
         </ListView>
         <ListView DockPanel.Dock="Left"
                   Width="200"
-                  SelectedValue="{Binding SelectedNote, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                  SelectedItem="{Binding SelectedNote, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
                   ItemsSource="{Binding Notes}" d:ItemsSource="{d:SampleData ItemCount=5}">
             <ListView.ItemTemplate>
                 <DataTemplate>
-                    <uc:DisplayNote Note="{Binding}" />
+                    <Grid>
+                        <uc:DisplayNote Note="{Binding}">
+                            <uc:DisplayNote.ContextMenu>
+                                <ContextMenu>
+                                    <MenuItem Header="Rename"
+                                              Command="{Binding Source={StaticResource vm}, Path=EditCommand}"
+                                              CommandParameter="{Binding}"/>
+                                    <MenuItem Header="Delete"
+                                              Command="{Binding Source={StaticResource vm},Path=DeleteCommand}"
+                                              CommandParameter="{Binding}"/>
+                                </ContextMenu>
+                            </uc:DisplayNote.ContextMenu>
+                        </uc:DisplayNote>
+                        <TextBox Visibility="{Binding Source={StaticResource vm},Path=IsNoteVisible}"
+                                 Text="{Binding Title}">
+                            <i:Interaction.Triggers>
+                                <i:EventTrigger EventName="LostFocus">
+                                    <i:InvokeCommandAction Command="{Binding Source={StaticResource vm},Path=EndEditingCommand}"
+                                                           CommandParameter="{Binding}" />
+                                </i:EventTrigger>
+                            </i:Interaction.Triggers>
+                        </TextBox>
+                    </Grid>
                 </DataTemplate>
             </ListView.ItemTemplate>
         </ListView>

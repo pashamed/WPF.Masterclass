@@ -1,19 +1,19 @@
 ﻿using EvernoteClone.Model;
 using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
 using System.Windows.Input;
 
 namespace EvernoteClone.ViewModel.Commands
 {
-    public class EndEditingCommand : ICommand
+    public class DeleteCommand : ICommand
     {
         public event EventHandler? CanExecuteChanged;
+        NotesVM NotesVM;
 
-        public NotesVM VM { get; set; }
-
-        public EndEditingCommand(NotesVM vM)
-        {
-            VM = vM;
-        }
+        public DeleteCommand(NotesVM vM) { NotesVM = vM; }
 
         public bool CanExecute(object? parameter)
         {
@@ -21,15 +21,16 @@ namespace EvernoteClone.ViewModel.Commands
         }
 
         public void Execute(object? parameter)
-         {
+        {
             if (parameter as Notebook is not null)
             {
-                VM.StopEditing<Notebook>(parameter as Notebook);
+                NotesVM.Delete<Notebook>(parameter as Notebook);
             }
             else if (parameter as Note is not null)
             {
-                VM.StopEditing<Note>(parameter as Note);
+                NotesVM.Delete<Note>(parameter as Note);
             }
+
         }
     }
 }

@@ -1,7 +1,10 @@
 ﻿using EvernoteClone.Model;
+using EvernoteClone.View;
 using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
+using System.IO;
+using System.Linq;
 using System.Net.Http;
 using System.Text;
 using System.Text.Json;
@@ -58,6 +61,23 @@ namespace EvernoteClone.ViewModel.Helpers
         public async Task<bool> Delete<TEntity>(TEntity entity) where TEntity : class, IHasId<string>
         {
             _repository.Remove<TEntity>(entity);
+            if (entity is Notebook)
+            {
+                var notes = _repository.Notes.Where<Note>(n => n.Notebook.Id == entity.Id);
+                foreach (var note in notes)
+                {
+                    if(File.Exists(note.FileLocation))
+                    {
+                        File.Delete(note.FileLocation);
+                    }
+                }
+            }else if(entity is Note)
+            {
+                if(File.Exists((entity as Note).FileLocation))
+                {
+                    File.Delete((entity as Note).FileLocation);
+                }
+            }
             if (await _repository.SaveChangesAsync() > 0)
                 return true;
             else

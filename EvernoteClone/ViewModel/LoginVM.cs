@@ -11,6 +11,7 @@ namespace EvernoteClone.ViewModel
     public class LoginVM : INotifyPropertyChanged
     {
         private DatabaseHelperContext _repository;
+        private LocalAuthHelper _localAuthHelper;
         private bool isShowingRegister = false;
         private User? user;
 
@@ -67,6 +68,7 @@ namespace EvernoteClone.ViewModel
 
             User = new User();
             _repository = new DatabaseHelperContext();
+            _localAuthHelper = new LocalAuthHelper();
         }
 
         public void SwitchViews()
@@ -86,8 +88,9 @@ namespace EvernoteClone.ViewModel
 
         public async void Login()
         {
-            bool result = await FirebaseAuthHelper.LoginAsync(User);
-            if (result)
+            App.CurrentUser = await _localAuthHelper.LoginAsync(User);
+            (bool,bool) logedIn = (await FirebaseAuthHelper.LoginAsync(User), App.CurrentUser is not null);
+            if(logedIn.Item1 | logedIn.Item2)
             {
                 Authenticated?.Invoke(this, EventArgs.Empty);
             }

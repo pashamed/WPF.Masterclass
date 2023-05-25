@@ -7,24 +7,113 @@
         xmlns:local="clr-namespace:EvernoteClone.View"
         xmlns:vm="clr-namespace:EvernoteClone.ViewModel"
         mc:Ignorable="d"
-        Title="Login" Height="300" Width="200">
+        Title="Login"
+        Icon="favicon.ico"
+        Height="300" Width="210">
     <Window.Resources>
         <vm:LoginVM x:Key="vm" />
+        <Storyboard x:Key="MoveUp">
+            <DoubleAnimationUsingKeyFrames Storyboard.TargetName="button" Storyboard.TargetProperty="(UIElement.RenderTransform).(TransformGroup.Children)[3].(TranslateTransform.X)">
+                <EasingDoubleKeyFrame KeyTime="00:00:00" Value="0">
+                    <EasingDoubleKeyFrame.EasingFunction>
+                        <BackEase EasingMode="EaseInOut"/>
+                    </EasingDoubleKeyFrame.EasingFunction>
+                </EasingDoubleKeyFrame>
+                <EasingDoubleKeyFrame KeyTime="00:00:01" Value="0">
+                    <EasingDoubleKeyFrame.EasingFunction>
+                        <BackEase EasingMode="EaseInOut"/>
+                    </EasingDoubleKeyFrame.EasingFunction>
+                </EasingDoubleKeyFrame>
+            </DoubleAnimationUsingKeyFrames>
+            <DoubleAnimationUsingKeyFrames Storyboard.TargetName="button" Storyboard.TargetProperty="(UIElement.RenderTransform).(TransformGroup.Children)[3].(TranslateTransform.Y)">
+                <EasingDoubleKeyFrame KeyTime="00:00:00" Value="18.000009000000006">
+                    <EasingDoubleKeyFrame.EasingFunction>
+                        <BackEase EasingMode="EaseInOut"/>
+                    </EasingDoubleKeyFrame.EasingFunction>
+                </EasingDoubleKeyFrame>
+                <EasingDoubleKeyFrame KeyTime="00:00:01" Value="0">
+                    <EasingDoubleKeyFrame.EasingFunction>
+                        <BackEase EasingMode="EaseInOut"/>
+                    </EasingDoubleKeyFrame.EasingFunction>
+                </EasingDoubleKeyFrame>
+            </DoubleAnimationUsingKeyFrames>
+            <DoubleAnimationUsingKeyFrames Storyboard.TargetName="button" Storyboard.TargetProperty="(UIElement.Opacity)">
+                <EasingDoubleKeyFrame KeyTime="00:00:00" Value="0.8">
+                    <EasingDoubleKeyFrame.EasingFunction>
+                        <BackEase EasingMode="EaseInOut"/>
+                    </EasingDoubleKeyFrame.EasingFunction>
+                </EasingDoubleKeyFrame>
+                <EasingDoubleKeyFrame KeyTime="00:00:01" Value="1">
+                    <EasingDoubleKeyFrame.EasingFunction>
+                        <BackEase EasingMode="EaseInOut"/>
+                    </EasingDoubleKeyFrame.EasingFunction>
+                </EasingDoubleKeyFrame>
+            </DoubleAnimationUsingKeyFrames>
+            <DoubleAnimationUsingKeyFrames Storyboard.TargetName="button" Storyboard.TargetProperty="(FrameworkElement.Width)">
+                <EasingDoubleKeyFrame KeyTime="00:00:00" Value="100"/>
+                <EasingDoubleKeyFrame KeyTime="00:00:01" Value="180"/>
+            </DoubleAnimationUsingKeyFrames>
+            <DoubleAnimationUsingKeyFrames Storyboard.TargetName="button" Storyboard.TargetProperty="(FrameworkElement.Height)">
+                <EasingDoubleKeyFrame KeyTime="00:00:00" Value="10">
+                    <EasingDoubleKeyFrame.EasingFunction>
+                        <BackEase EasingMode="EaseInOut"/>
+                    </EasingDoubleKeyFrame.EasingFunction>
+                </EasingDoubleKeyFrame>
+                <EasingDoubleKeyFrame KeyTime="00:00:01" Value="20">
+                    <EasingDoubleKeyFrame.EasingFunction>
+                        <BackEase EasingMode="EaseInOut"/>
+                    </EasingDoubleKeyFrame.EasingFunction>
+                </EasingDoubleKeyFrame>
+            </DoubleAnimationUsingKeyFrames>
+        </Storyboard>
     </Window.Resources>
+    <Window.Triggers>
+        <EventTrigger RoutedEvent="FrameworkElement.Loaded">
+            <BeginStoryboard Storyboard="{StaticResource MoveUp}"/>
+        </EventTrigger>
+        <EventTrigger RoutedEvent="ButtonBase.Click" SourceName="textBlock2">
+            <BeginStoryboard Storyboard="{StaticResource MoveUp}"/>
+        </EventTrigger>
+    </Window.Triggers>
     <Grid DataContext="{StaticResource vm}">
-        <StackPanel Visibility="{Binding LoginVis}"
-                    Margin="10">
-            <TextBlock Text="Email:" />
-            <TextBox Text="{Binding User.Username, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
-            <TextBlock Text="Password:" />
-            <TextBox Text="{Binding User.Password, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
-            <Button Command="{Binding LoginCommand}"
+        <StackPanel x:Name="stackPanel" Visibility="{Binding LoginVis}"
+                    Margin="10,28,10,-8" RenderTransformOrigin="0.5,0.5">
+            <StackPanel.RenderTransform>
+                <TransformGroup>
+                    <ScaleTransform/>
+                    <SkewTransform/>
+                    <RotateTransform/>
+                    <TranslateTransform/>
+                </TransformGroup>
+            </StackPanel.RenderTransform>
+            <TextBlock x:Name="textBlock" Text="Email:" />
+            <TextBox x:Name="textBox" Text="{Binding User.Username, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+            <TextBlock x:Name="textBlock1" Text="Password:" />
+            <TextBox x:Name="textBox1" Text="{Binding User.Password, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+            <Button x:Name="button" Command="{Binding LoginCommand}"
                     CommandParameter="{Binding User}"
                     Margin="0,5"
-                    Content="Login" />
-            <TextBlock Text="Register"
+                    Content="Login" RenderTransformOrigin="0.5,0.5" >
+                <Button.RenderTransform>
+                    <TransformGroup>
+                        <ScaleTransform/>
+                        <SkewTransform/>
+                        <RotateTransform/>
+                        <TranslateTransform/>
+                    </TransformGroup>
+                </Button.RenderTransform>
+            </Button>
+            <TextBlock x:Name="textBlock2" Text="Register"
                        Foreground="DodgerBlue"
-                       TextDecorations="Underline">
+                       TextDecorations="Underline" RenderTransformOrigin="0.5,0.5">
+                <TextBlock.RenderTransform>
+                    <TransformGroup>
+                        <ScaleTransform ScaleX="1" ScaleY="0.9"/>
+                        <SkewTransform/>
+                        <RotateTransform/>
+                        <TranslateTransform/>
+                    </TransformGroup>
+                </TextBlock.RenderTransform>
                 <i:Interaction.Triggers>
                     <i:EventTrigger EventName="MouseLeftButtonDown">
                         <i:InvokeCommandAction Command="{Binding ShowRegisterCommand}" />
@@ -35,15 +124,15 @@
         <StackPanel Visibility="{Binding RegisterVis}"
                     Margin="10">
             <TextBlock Text="Email:" />
-            <TextBox Text="{Binding User.Username,Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+            <TextBox Text="{Binding User.Username, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
             <TextBlock Text="Name:" />
-            <TextBox Text="{Binding User.Name,Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+            <TextBox Text="{Binding User.Name, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
             <TextBlock Text="Lastname:" />
-            <TextBox Text="{Binding User.Lastname,Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+            <TextBox Text="{Binding User.Lastname, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
             <TextBlock Text="Password:" />
-            <TextBox Text="{Binding User.Password,Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+            <TextBox Text="{Binding User.Password, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
             <TextBlock Text="Confirm password:" />
-            <TextBox Text="{Binding User.ConfirmPassword,Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+            <TextBox Text="{Binding User.ConfirmPassword, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
             <Button Command="{Binding RegisterCommand}"
                     CommandParameter="{Binding User}"
                     Content="Register"

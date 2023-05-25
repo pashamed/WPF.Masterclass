@@ -50,10 +50,12 @@ namespace EvernoteClone.View
             {
                 if (!e.FileLocation.IsNullOrEmpty() && File.Exists(e.FileLocation))
                 {
-                    FileStream fileStream = new FileStream(e.FileLocation, FileMode.Open);
-                    var contents = new TextRange(contentRichTextBox.Document.ContentStart, contentRichTextBox.Document.ContentEnd);
-                    contents.Load(fileStream, DataFormats.Rtf);
-                    fileStream.Close();
+                    using FileStream fileStream = new FileStream(e.FileLocation, FileMode.Open);
+                    {
+                        var contents = new TextRange(contentRichTextBox.Document.ContentStart, contentRichTextBox.Document.ContentEnd);
+                        contents.Load(fileStream, DataFormats.Rtf);
+                        fileStream.Close();
+                    }                    
                 }
             }
         }

@@ -8,6 +8,6 @@ namespace EvernoteClone
     /// </summary>
     public partial class App : Application
     {
-        public static User CurrentUser;
+        public static User CurrentUser = null;
     }
 }
