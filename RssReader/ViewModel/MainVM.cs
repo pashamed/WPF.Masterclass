@@ -10,17 +10,20 @@ namespace RssReader.ViewModel
 {
     public class MainVM
     {
+        IRssHelper rssHelper;
+
         public ObservableCollection<Item> Items { get; set; }
 
-        public MainVM()
+        public MainVM(IRssHelper rssHelper)
         {
             Items = new ObservableCollection<Item>();
-            ReadRss();
+            this.rssHelper = rssHelper;
+            ReadRss();           
         }
 
         private async void ReadRss()
         {
-            var posts = await RssHelper.GetPosts();
+            var posts = await rssHelper.GetPosts();
 
             Items.Clear();
             foreach (var post in posts)

@@ -3,6 +3,7 @@ using RssReader.ViewModel;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Runtime.CompilerServices;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
@@ -22,7 +23,12 @@ namespace RssReader
     /// </summary>
     public partial class MainWindow : Window
     {
-        public MainWindow()
+        public MainVM ViewModel
+        {
+            set { DataContext = value; }
+        }
+
+        public MainWindow(IRssVM vm)
         {
             InitializeComponent();          
         }

@@ -12,10 +12,9 @@ using System.Xml.Serialization;
 
 namespace RssReader.ViewModel
 {
-    public class RssHelper
+    public class RssHelper : IRssHelper
     {
-
-        public async static Task<List<Item>> GetPosts()
+        public async Task<List<Item>> GetPosts()
         {
             List<Item>? posts = new List<Item>();
             XmlSerializer xmlSerializer = new XmlSerializer(typeof(AppologyLineRss));
